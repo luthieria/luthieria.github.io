@@ -556,15 +556,11 @@ main {
 }
 
 /* Gradient style for service icons */
-/* .service-gradient-icon {
+.service-gradient-icon {
   font-size: 60px;
-  background: var(--text-gradient-yellow);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
-  display: inline-block;
-} */
+  color: var(--orange-yellow-crayola);
+  /* Remove background-clip and text-fill-color for SVG icons */
+}
 
 
 /**
