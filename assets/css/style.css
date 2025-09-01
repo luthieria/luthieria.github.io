@@ -438,14 +438,14 @@ main {
   padding-left: 7px;
 }
 
-.social-item a {
+ .social-item a {
   color: var(--light-gray-70);
   font-size: 18px;
 }
 
 .social-item a:hover {
   color: var(--light-gray);
-}
+} 
 
 
 
