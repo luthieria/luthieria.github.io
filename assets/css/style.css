@@ -440,7 +440,7 @@ main {
 
  .social-item a {
   color: var(--light-gray-70);
-  font-size: 30px;
+  font-size: 25px;
 }
 
 .social-item a:hover {
