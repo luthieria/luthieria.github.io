@@ -134,9 +134,6 @@ for (let i = 0; i < formInputs.length; i++) {
   });
 }
 
-
-
-// page navigation variables
 const navLinks = document.querySelectorAll('[data-nav-link]');
 const pages = document.querySelectorAll('article[data-page]');
 
@@ -152,3 +149,50 @@ navLinks.forEach(link => {
     document.querySelector(`article[data-page="${pageName}"]`).classList.add('active');
   });
 });
+
+
+
+
+/* CUSTOM PLAYER *
+document.addEventListener('DOMContentLoaded', () => {
+  const audio = document.querySelector('.player-audio');
+  const playBtn = document.querySelector('.play-pause-btn');
+  const progressBar = document.querySelector('.progress-bar');
+  const timeDisplay = document.querySelector('.time-display');
+
+  // Set the initial state of the button
+  playBtn.textContent = '▶';
+
+  // Play/Pause functionality
+  playBtn.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play();
+      playBtn.textContent = '❚❚';
+    } else {
+      audio.pause();
+      playBtn.textContent = '▶';
+    }
+  });
+
+  // Update progress bar
+  audio.addEventListener('timeupdate', () => {
+    const progress = (audio.currentTime / audio.duration) * 100;
+    progressBar.style.width = `${progress}%`;
+    
+    // Update time display
+    const currentMinutes = Math.floor(audio.currentTime / 60);
+    const currentSeconds = Math.floor(audio.currentTime % 60).toString().padStart(2, '0');
+    const totalMinutes = Math.floor(audio.duration / 60);
+    const totalSeconds = Math.floor(audio.duration % 60).toString().padStart(2, '0');
+    
+    timeDisplay.textContent = `${currentMinutes}:${currentSeconds} / ${totalMinutes}:${totalSeconds}`;
+  });
+
+  // Reset button and progress bar when audio ends
+  audio.addEventListener('ended', () => {
+    playBtn.textContent = '▶';
+    progressBar.style.width = '0%';
+    audio.currentTime = 0;
+  });
+});
+/* CUSTOM PLAYER FIM */

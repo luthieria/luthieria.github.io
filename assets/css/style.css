@@ -946,7 +946,7 @@ main {
   margin-bottom: 10px;
 }
 
-.project-item { display: none; }
+.project-item { display: none; } 
 
 .project-item.active {
   display: block;
@@ -1031,6 +1031,41 @@ main {
   color: var(--light-gray-70);
   font-size: var(--fs-6);
   font-weight: var(--fw-300);
+}
+/* 
+.audio-player-container {
+  text-align: left;
+}
+
+.my-audio-player {
+  width: 200%;
+} */
+
+/* 2-Column player */
+
+.project-item .audio-grid {
+  display: flex !important; /* Forces the flexbox layout to apply */
+  flex-direction: row; 
+  /*gap: 20px;*/
+  justify-content: space-between;
+  width: 100%;
+}
+
+.project-item .audio-column {
+  flex: 1; /* Makes both columns take up equal width */
+  border-radius: 16px; /* Match the corner radius of your images */
+  overflow: hidden; /* This is essential to clip the iframe's corners */
+}
+
+.project-item .audio-column iframe {
+  border-radius: 16px;
+}
+
+/* Add this to make sure your media query works */
+@media (max-width: 768px) {
+  .project-item .audio-grid {
+    flex-direction: column !important; /* Stacks columns on mobile */
+  }
 }
 
 
