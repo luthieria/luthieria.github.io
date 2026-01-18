@@ -113,8 +113,6 @@ for (let i = 0; i < filterBtn.length; i++) {
 
 }
 
-
-
 // contact form variables
 const form = document.querySelector("[data-form]");
 const formInputs = document.querySelectorAll("[data-form-input]");
@@ -150,49 +148,158 @@ navLinks.forEach(link => {
   });
 });
 
+/* ==== PLAYER ==== */
+const musicTracks = [
+  {
+    title: "Track One",
+    artist: "Dimitri S.",
+    src: "./assets/audio/track1.mp3",
+    cover: "./assets/images/album-art1.jpg"
+  },
+  {
+    title: "Track Two",
+    artist: "Dimitri S.",
+    src: "./assets/audio/track2.mp3",
+    cover: "./assets/images/album-art2.jpg"
+  }
+];
 
-
-
-/* CUSTOM PLAYER *
+// ==== PLAYER ==== //
 document.addEventListener('DOMContentLoaded', () => {
-  const audio = document.querySelector('.player-audio');
-  const playBtn = document.querySelector('.play-pause-btn');
-  const progressBar = document.querySelector('.progress-bar');
-  const timeDisplay = document.querySelector('.time-display');
+  const audio = document.getElementById('audio-source');
+  const playBtn = document.getElementById('play-btn');
+  const playIcon = document.getElementById('play-icon');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const progressContainer = document.getElementById('progress-container');
+  const progressBar = document.getElementById('progress-bar');
+  const trackTitle = document.getElementById('track-title');
+  const currentTimeEl = document.getElementById('current-time');
+  const durationEl = document.getElementById('duration');
+  const playlistItems = document.querySelectorAll('.playlist-item');
 
-  // Set the initial state of the button
-  playBtn.textContent = '▶';
+  let isPlaying = false;
+  let currentTrackIndex = 0;
 
-  // Play/Pause functionality
-  playBtn.addEventListener('click', () => {
-    if (audio.paused) {
-      audio.play();
-      playBtn.textContent = '❚❚';
+  // Load initial track info
+  loadTrack(currentTrackIndex);
+
+  function loadTrack(index) {
+    // Reset active class
+    playlistItems.forEach(item => item.classList.remove('active'));
+    playlistItems[index].classList.add('active');
+
+    const trackName = playlistItems[index].querySelector('.p-title').innerText;
+    const trackSrc = playlistItems[index].getAttribute('data-src');
+    
+    trackTitle.innerText = trackName;
+    audio.src = trackSrc;
+  }
+
+  function togglePlay() {
+    if (isPlaying) {
+      pauseSong();
     } else {
-      audio.pause();
-      playBtn.textContent = '▶';
+      playSong();
     }
-  });
+  }
 
-  // Update progress bar
-  audio.addEventListener('timeupdate', () => {
-    const progress = (audio.currentTime / audio.duration) * 100;
-    progressBar.style.width = `${progress}%`;
-    
-    // Update time display
-    const currentMinutes = Math.floor(audio.currentTime / 60);
-    const currentSeconds = Math.floor(audio.currentTime % 60).toString().padStart(2, '0');
-    const totalMinutes = Math.floor(audio.duration / 60);
-    const totalSeconds = Math.floor(audio.duration % 60).toString().padStart(2, '0');
-    
-    timeDisplay.textContent = `${currentMinutes}:${currentSeconds} / ${totalMinutes}:${totalSeconds}`;
-  });
+  function playSong() {
+    isPlaying = true;
+    audio.play();
+    playIcon.setAttribute('name', 'pause');
+  }
 
-  // Reset button and progress bar when audio ends
-  audio.addEventListener('ended', () => {
-    playBtn.textContent = '▶';
-    progressBar.style.width = '0%';
-    audio.currentTime = 0;
+  function pauseSong() {
+    isPlaying = false;
+    audio.pause();
+    playIcon.setAttribute('name', 'play');
+  }
+
+  function prevSong() {
+    currentTrackIndex--;
+    if (currentTrackIndex < 0) {
+      currentTrackIndex = playlistItems.length - 1;
+    }
+    loadTrack(currentTrackIndex);
+    playSong();
+  }
+
+  function nextSong() {
+    currentTrackIndex++;
+    if (currentTrackIndex > playlistItems.length - 1) {
+      currentTrackIndex = 0;
+    }
+    loadTrack(currentTrackIndex);
+    playSong();
+  }
+
+  function updateProgress(e) {
+    const { duration, currentTime } = e.srcElement;
+    const progressPercent = (currentTime / duration) * 100;
+    progressBar.style.width = `${progressPercent}%`;
+
+    // Time formatting
+    if(duration){
+      const durationMinutes = Math.floor(duration / 60);
+      let durationSeconds = Math.floor(duration % 60);
+      if (durationSeconds < 10) { durationSeconds = `0${durationSeconds}`; }
+      
+      const currentMinutes = Math.floor(currentTime / 60);
+      let currentSeconds = Math.floor(currentTime % 60);
+      if (currentSeconds < 10) { currentSeconds = `0${currentSeconds}`; }
+
+      durationEl.innerText = `${durationMinutes}:${durationSeconds}`;
+      currentTimeEl.innerText = `${currentMinutes}:${currentSeconds}`;
+    }
+  }
+
+  function setProgress(e) {
+    const width = this.clientWidth;
+    const clickX = e.offsetX;
+    const duration = audio.duration;
+    audio.currentTime = (clickX / width) * duration;
+  }
+
+  // Event Listeners
+  playBtn.addEventListener('click', togglePlay);
+  prevBtn.addEventListener('click', prevSong);
+  nextBtn.addEventListener('click', nextSong);
+  audio.addEventListener('timeupdate', updateProgress);
+  progressContainer.addEventListener('click', setProgress);
+  audio.addEventListener('ended', nextSong);
+
+  // Click on playlist item to play
+  playlistItems.forEach((item, index) => {
+    item.addEventListener('click', () => {
+      currentTrackIndex = index;
+      loadTrack(currentTrackIndex);
+      playSong();
+    });
   });
 });
-/* CUSTOM PLAYER FIM */
+
+(function () {
+  const playerItem = document.querySelector('.project-item.player-item');
+
+  function updatePlayerVisibility(filterName) {
+    if (!playerItem) return;
+    // show when filter name matches or when "all" (adjust to your filter labels)
+    const showNames = ['Produção & Engenharia de Áudio', 'Produção', 'Engenharia de Áudio', 'All', 'Todas'];
+    const normalized = (filterName || '').trim();
+    if (showNames.includes(normalized)) playerItem.classList.add('show');
+    else playerItem.classList.remove('show');
+  }
+
+  // Attach to filter buttons (common selectors used in this project)
+  document.querySelectorAll('.filter-item button, .filter-list button, .filter-select .select-item button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      updatePlayerVisibility(btn.textContent || btn.innerText);
+    });
+  });
+
+  // initial check: look for any active filter button
+  const activeBtn = document.querySelector('.filter-item button.active, .filter-list button.active, .filter-select .select-item button.active');
+  if (activeBtn) updatePlayerVisibility(activeBtn.textContent || activeBtn.innerText);
+  else updatePlayerVisibility('All');
+})();
