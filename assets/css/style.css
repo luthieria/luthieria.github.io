@@ -126,7 +126,7 @@
   border-radius: 20px;
   padding: 25px;
   box-shadow: 0 16px 30px hsla(0, 0%, 0%, 0.125);
-  margin-top: 20px;
+  margin-top: 0px;
   
   width: 100%;     /* Fills the parent container */
   max-width: none; /* Removes the 600px limit forcefully */
@@ -248,7 +248,7 @@
   order: 3;
   margin-top: 8px;
   border-top: 1px solid var(--player-border);
-  max-height: 220px;
+  max-height: 320px;
   overflow-y: auto;
   width: 100%;
 }
@@ -1139,9 +1139,9 @@ main {
 
 /* Make the player list item span all grid columns so it keeps full width */
 .project-item.player-item {
-  grid-column: 1 / -1;
+  /* allow the player to occupy a single grid cell like other project cards */
   display: none; /* hidden by default; toggled via JS */
-  width: 100%;
+  width: auto;
   padding: 0;
   margin: 0;
 }
@@ -1156,6 +1156,20 @@ main {
   width: 100%;
   max-width: none;
   box-sizing: border-box;
+}
+
+/* Restore full-width behavior when JS adds .full-width (used for audio category) */
+.project-item.player-item.full-width {
+  grid-column: 1 / -1;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* When player is full-width (audio category), show full playlist without scrolling */
+.project-item.player-item.full-width .playlist {
+  max-height: none;
+  overflow: visible;
 }
 
 .project-item.active {
@@ -1877,6 +1891,31 @@ textarea.form-input::-webkit-resizer { display: none; }
   /* portfolio and blog grid */
 
   .project-list, .blog-posts-list { grid-template-columns: 1fr 1fr; }
+
+  /* Make the player card occupy the height of two stacked cards for smoother layout */
+  .project-item.player-item {
+    grid-row: span 2;
+  }
+
+  /* Ensure the inner player fills its grid cell */
+  .project-item.player-item .audio-player-container {
+    /* cap the container so it doesn't grow when playlist expands */
+    /* max-height: 570px; */
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Let the playlist grow to take remaining vertical space inside the player */
+  .project-item.player-item .playlist {
+    flex: 1 1 auto;
+    max-height: 310px;
+    overflow: auto;
+  }
+
+  /* If JS requests full-width (audio category), restore single-row behavior */
+  .project-item.player-item.full-width {
+    grid-row: auto;
+  }
 
 
 

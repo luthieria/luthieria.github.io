@@ -78,6 +78,11 @@ for (let i = 0; i < selectItems.length; i++) {
 // filter variables
 const filterItems = document.querySelectorAll("[data-filter-item]");
 
+// project list and original order (used for shuffling/restoring)
+const projectList = document.querySelector('.project-list');
+const playerListItem = document.querySelector('.project-item.player-item');
+const originalOrder = projectList ? Array.from(projectList.children) : [];
+
 const filterFunc = function (selectedValue) {
 
   for (let i = 0; i < filterItems.length; i++) {
@@ -90,6 +95,21 @@ const filterFunc = function (selectedValue) {
       filterItems[i].classList.remove("active");
     }
 
+  }
+
+  // If 'tudo' is selected, shuffle all project items (including player) to randomize order
+  if (selectedValue === 'tudo' && projectList) {
+    const items = Array.from(projectList.children);
+    // Fisher-Yates shuffle
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    // Re-append shuffled items
+    items.forEach(item => projectList.appendChild(item));
+  } else if (projectList && originalOrder.length) {
+    // restore original order
+    originalOrder.forEach(item => projectList.appendChild(item));
   }
 
 }
@@ -285,10 +305,24 @@ document.addEventListener('DOMContentLoaded', () => {
   function updatePlayerVisibility(filterName) {
     if (!playerItem) return;
     // show when filter name matches or when "all" (adjust to your filter labels)
-    const showNames = ['Produção & Engenharia de Áudio', 'Produção', 'Engenharia de Áudio', 'All', 'Todas'];
-    const normalized = (filterName || '').trim();
+    // normalize to lowercase and match common labels for "all" and audio categories
+    const normalized = (filterName || '').trim().toLowerCase();
+    const showNames = [
+      'produção & engenharia de áudio',
+      'produção',
+      'engenharia de áudio',
+      'all',
+      'todas',
+      'tudo'
+    ];
     if (showNames.includes(normalized)) playerItem.classList.add('show');
     else playerItem.classList.remove('show');
+    // make player occupy full grid when the specific audio category is selected
+    if (normalized === 'produção & engenharia de áudio') {
+      playerItem.classList.add('full-width');
+    } else {
+      playerItem.classList.remove('full-width');
+    }
   }
 
   // Attach to filter buttons (common selectors used in this project)
