@@ -75,12 +75,66 @@ for (let i = 0; i < selectItems.length; i++) {
   });
 }
 
-// filter variables
-const filterItems = document.querySelectorAll("[data-filter-item]");
-
 // project list and original order (used for shuffling/restoring)
 const projectList = document.querySelector('.project-list');
 const playerListItem = document.querySelector('.project-item.player-item');
+
+const portfolioItems = window.portfolioItems || [];
+
+const createPortfolioListItem = function (item) {
+  const li = document.createElement('li');
+  li.className = 'project-item active';
+  li.dataset.filterItem = '';
+  li.dataset.category = item.category;
+
+  const anchor = document.createElement('a');
+  anchor.href = item.link || '#';
+  if (item.modalImage) {
+    anchor.dataset.modalItem = '';
+    anchor.dataset.modalImgUrl = item.modalImage;
+    anchor.dataset.modalTitle = item.title;
+  }
+
+  const figure = document.createElement('figure');
+  figure.className = 'project-img';
+
+  const iconBox = document.createElement('div');
+  iconBox.className = 'project-item-icon-box';
+  iconBox.innerHTML = '<ion-icon name="eye-outline"></ion-icon>';
+
+  const img = document.createElement('img');
+  img.src = item.image;
+  img.alt = item.alt || item.title;
+  img.loading = 'lazy';
+
+  figure.appendChild(iconBox);
+  figure.appendChild(img);
+
+  const title = document.createElement('h3');
+  title.className = 'project-title';
+  title.textContent = item.title;
+
+  const category = document.createElement('p');
+  category.className = 'project-category';
+  category.textContent = item.displayCategory || item.category;
+
+  anchor.appendChild(figure);
+  anchor.appendChild(title);
+  anchor.appendChild(category);
+
+  li.appendChild(anchor);
+  return li;
+};
+
+const renderPortfolioItems = function () {
+  if (!projectList || !portfolioItems.length) return;
+  portfolioItems.forEach(item => projectList.appendChild(createPortfolioListItem(item)));
+};
+
+renderPortfolioItems();
+
+// filter variables
+const filterItems = document.querySelectorAll("[data-filter-item]");
 const originalOrder = projectList ? Array.from(projectList.children) : [];
 
 const filterFunc = function (selectedValue) {

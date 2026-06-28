@@ -1,0 +1,13 @@
+{
+  "commands.workspaceCommands": {
+    "Serve Portfolio Website": {
+      "command": "workbench.action.tasks.runTask",
+      "args": "Serve Portfolio Website",
+      "statusBar": {
+        "alignment": "left",
+        "text": "$(globe) Serve",
+        "tooltip": "Serve Portfolio Website"
+      }
+    }
+  }
+}
